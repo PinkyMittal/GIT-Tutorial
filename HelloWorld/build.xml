@@ -1,0 +1,75 @@
+<project name="Java project build" default="build">
+<property name="project.local.directory" value="C:\Training\HelloWorld" />
+<property name="src.path" value="${project.local.directory}/src/com" />
+<property name="lib.path" value="${project.local.directory}/lib" />
+<property name="dest.path" value="${project.local.directory}/src/com" />
+<property name="junit.output.dir" value="${project.local.directory}/junit" />
+<property name="rep.dir" value="${project.local.directory}/junit/rep" />
+
+<!--<path id="classpath.test">
+    <fileset dir="lib">
+        <include name="**/*.jar" />
+    </fileset>
+</path> -->
+
+<!--<taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+    <classpath refid="classpath.test" />
+</taskdef> -->
+
+<path id="MyProject.classpath">
+  <!-- <pathelement location="lib/ant-junit.jar" /> -->
+   <pathelement location="lib/junit_4.0.jar" />
+   <dirset dir="${project.local.directory}/src">
+        <include name="com"/>
+   </dirset>
+</path>
+
+<!-- <path id="lib.classpath">
+   <pathelement location="lib/ant-junit.jar" />  
+      <pathelement location="lib/junit_4.0.jar" />
+</path> -->
+<target name="clean">
+<delete dir="${junit.output.dir}" />
+<delete dir="${rep.dir}" />
+</target>
+
+<target name="build" depends="clean">
+    <javac srcdir="${src.path}" destdir="${dest.path}" classpathref="MyProject.classpath">
+    </javac>
+    <antcall target="test">
+    </antcall>
+</target> 
+
+
+
+<target name="test" >
+   <pathconvert property="testoutput" refid="MyProject.classpath" />
+    <echo>Path = ${testoutput}</echo>
+    <echo>Path = "${src.path}"</echo>
+    <mkdir dir="${junit.output.dir}" />
+	<mkdir dir="${rep.dir}" />
+    <junit haltonerror="false" showoutput="true">
+	
+
+        <classpath refid="MyProject.classpath">
+        </classpath>
+        <batchtest todir="${junit.output.dir}">
+            <formatter type="xml" />
+            <fileset dir="${src.path}">
+                <include name="AllTests.java" />
+            </fileset>
+        </batchtest>
+
+    </junit>
+</target>
+ <target name="junit_rep">
+
+        <junitreport todir="${rep.dir}">
+
+                <fileset dir="${junit.output.dir}">
+                        <include name="TESTS-TestSuites.xml"/>
+                </fileset>
+                <report todir="${rep.dir}"/>
+        </junitreport>
+                </target>
+</project>
